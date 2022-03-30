@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+		<!-- Popper JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+		<link rel="stylesheet" href="../static/style.css">
+		<script src="../static/script.js"></script>
+		<title>{% block title %}{% endblock %}</title>
+	</head>
+	
+	<body>
+		<!-- Nav Bar -->
+		<nav class="navbar navbar-expand-sm bg-secondary navbar-dark">
+			<a class="navbar-brand" href="index.html">
+				Emissions Data
+			</a>
+			<ul class="navbar-nav">
+				<li {% if active_page == "index" %} class="nav-item active"{% else %}class="nav-item"{% endif %}>
+					<a class="nav-link" href="index.html">About the Data</a>
+				</li>
+				<li {% if active_page == "page1" %} class="nav-item active"{% else %}class="nav-item"{% endif %}>
+					<a class="nav-link" href="page1.html">Data</a>
+				</li>
+			</ul>
+		</nav>
+		
+		<!-- Page content -->
+		{% block content %}{% endblock %}
+	</body>
+</html>
