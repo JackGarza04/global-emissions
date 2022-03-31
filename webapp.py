@@ -8,8 +8,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def render_main():
-    print(get_sector_data())
-    return render_template('page1.html') # !!FLIP WHEN DONE WITH GRAPH TESTING!!
+    return render_template('page1.html', points = format_dict_as_graph(get_sector_data())) # !!FLIP WHEN DONE WITH GRAPH TESTING!!
 
 @app.route("/p1")
 def render_page1():
@@ -25,12 +24,12 @@ def get_sector_data():
     otherI = 0.0
     otherS = 0.0
     for country in countries:
-        if country["Country"] == "Afghanistan" and country["year"] >= 1990:
-            power += country["Power Industry"]
-            buildings += country["Buildings"]
-            transport += country["Transport"]
-            otherI += country["Other Industry"]
-            otherS += country["Other sectors"]
+        if country["Country"] == "Afghanistan" and country["Year"] >= 1990:
+            power += country["Emissions"]["Sector"]["Power Industry"]
+            buildings += country["Emissions"]["Sector"]["Buildings"]
+            transport += country["Emissions"]["Sector"]["Transport"]
+            otherI += country["Emissions"]["Sector"]["Other Industry"]
+            otherS += country["Emissions"]["Sector"]["Other sectors"]
         else:
             pass
     power = power/(2012.0-1990.0) #end year minus start year to get averages
@@ -41,6 +40,15 @@ def get_sector_data():
     
     emissions_by_sector.update({'Power Industry': power, 'Buildings': buildings, 'Transport': transport, 'Other Industry': otherI, 'Other sectors': otherS}) #appends all attributes to the dictionary
     return emissions_by_sector
+    
+def format_dict_as_graph(data):
+    graph_points = ""
+    for key in data:
+        # {y: 79.45, label: "Google"}
+        graph_points = graph_points + Markup('{y:' + str(data[key]) + ', label: "' + key + '"}, ')
+    graph_points = graph_points[:-2]
+    print(graph_points)
+    return graph_points
     
 
 if __name__ == '__main__':
