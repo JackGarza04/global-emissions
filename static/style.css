@@ -23,7 +23,7 @@ a:link, a:visited,  a:hover, a:active
     text-decoration: none;
 }
 
-div {
+.box {
 	padding-top: 50px;
 	padding-right: 100px;
 	padding-bottom: 50px;
