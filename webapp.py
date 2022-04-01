@@ -8,11 +8,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def render_main():
-    return render_template('page1.html', points = format_dict_as_graph(get_sector_data())) # !!FLIP WHEN DONE WITH GRAPH TESTING!!
+    return render_template('page1.html', points = format_dict_as_graph(get_sector_data())) # 'index.html'
 
 @app.route("/p1")
 def render_page1():
-    return render_template('index.html')
+    return render_template('index.html') # 'page1.html', points = format_dict_as_graph(get_sector_data())
     
 def get_sector_data():
     with open('emissions.json') as emissions_data:
@@ -32,11 +32,11 @@ def get_sector_data():
             otherS += country["Emissions"]["Sector"]["Other sectors"]
         else:
             pass
-    power = power/(2012.0-1990.0) #end year minus start year to get averages
-    buildings = buildings/(2012.0-1990.0)
-    transport = transport/(2012.0-1990.0)
-    otherI = otherI/(2012.0-1990.0)
-    otherS = otherS/(2012.0-1990.0)
+    power = round((power/(2012.0-1990.0)), 2) #end year minus start year to get averages AND limit each result to 2 decimal places (for readability)
+    buildings = round((buildings/(2012.0-1990.0)), 2)
+    transport = round((transport/(2012.0-1990.0)), 2)
+    otherI = round((otherI/(2012.0-1990.0)), 2)
+    otherS = round((otherS/(2012.0-1990.0)), 2)
     
     emissions_by_sector.update({'Power Industry': power, 'Buildings': buildings, 'Transport': transport, 'Other Industry': otherI, 'Other sectors': otherS}) #appends all attributes to the dictionary
     return emissions_by_sector
@@ -44,8 +44,8 @@ def get_sector_data():
 def format_dict_as_graph(data):
     graph_points = ""
     for key in data:
-        # {y: 79.45, label: "Google"}
-        graph_points = graph_points + Markup('{y:' + str(data[key]) + ', label: "' + key + '"}, ')
+        # { y: 20, name: "Medical Aid" }
+        graph_points = graph_points + Markup('{ y: ' + str(data[key]) + ', name: "' + key + '" }, ')
     graph_points = graph_points[:-2]
     print(graph_points)
     return graph_points
