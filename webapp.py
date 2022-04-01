@@ -39,7 +39,8 @@ def get_sector_data():
     otherI = otherI/(2012.0-1990.0)
     otherS = otherS/(2012.0-1990.0)
     total = power + buildings + transport + otherI + otherS
-    power = 100 * round((power/total), 2)
+    
+    power = 100 * round((power/total), 2) # Express the data in terms of percentage distribution between the sectors
     buildings = 100 * round((buildings/total), 2)
     transport = 100 * round((transport/total), 2)
     otherI = 100 * round((otherI/total), 2)
