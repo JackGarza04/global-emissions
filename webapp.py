@@ -23,6 +23,7 @@ def get_sector_data():
     transport = 0.0
     otherI = 0.0
     otherS = 0.0
+    total = 0.0
     for country in countries:
         if country["Country"] == "Afghanistan" and country["Year"] >= 1990:
             power += country["Emissions"]["Sector"]["Power Industry"]
@@ -32,14 +33,21 @@ def get_sector_data():
             otherS += country["Emissions"]["Sector"]["Other sectors"]
         else:
             pass
-    power = round((power/(2012.0-1990.0)), 2) #end year minus start year to get averages AND limit each result to 2 decimal places (for readability)
-    buildings = round((buildings/(2012.0-1990.0)), 2)
-    transport = round((transport/(2012.0-1990.0)), 2)
-    otherI = round((otherI/(2012.0-1990.0)), 2)
-    otherS = round((otherS/(2012.0-1990.0)), 2)
+    power = power/(2012.0-1990.0) #end year minus start year to get averages AND limit each result to 2 decimal places (for readability)
+    buildings = buildings/(2012.0-1990.0)
+    transport = transport/(2012.0-1990.0)
+    otherI = otherI/(2012.0-1990.0)
+    otherS = otherS/(2012.0-1990.0)
+    total = power + buildings + transport + otherI + otherS
+    power = 100 * round((power/total), 2)
+    buildings = 100 * round((buildings/total), 2)
+    transport = 100 * round((transport/total), 2)
+    otherI = 100 * round((otherI/total), 2)
+    otherS = 100 * round((otherS/total), 2)
     
     emissions_by_sector.update({'Power Industry': power, 'Buildings': buildings, 'Transport': transport, 'Other Industry': otherI, 'Other sectors': otherS}) #appends all attributes to the dictionary
     return emissions_by_sector
+
     
 def format_dict_as_graph(data):
     graph_points = ""

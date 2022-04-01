@@ -17,6 +17,7 @@ window.onload = function () {
 			toolTipContent: "{name}: <strong>{y}%</strong>",
 			indexLabel: "{name} - {y}%",
 			dataPoints: [
+			{{ points }}
 /* 				{ y: 26, name: "School Aid", },
 				{ y: 20, name: "Medical Aid" },
 				{ y: 5, name: "Debt/Capital" },
@@ -24,7 +25,6 @@ window.onload = function () {
 				{ y: 7, name: "University" },
 				{ y: 17, name: "Executive" },
 				{ y: 22, name: "Other Local Assistance"} */
-				{{points}}
 			]
 		}]
 	});
