@@ -8,16 +8,37 @@ app = Flask(__name__)
 
 @app.route("/")
 def render_main():
-    return render_template('page1.html', points = format_dict_as_graph(get_sector_data())) # 'index.html'
+    return render_template('index.html') # 'index.html'
 
 @app.route("/p1")
 def render_page1():
-    return render_template('index.html') # 'page1.html', points = format_dict_as_graph(get_sector_data())
+    if "startYear" in request.args:
+        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names()) # 'page1.html', points = format_dict_as_graph(get_sector_data())
+    else:
+        return render_template('page1.html', options = get_country_names())
+
+def get_country_names():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    
+    country_list = []
+    options = ""
+    for i in countries:
+        country = i["Country"]
+        if country not in country_list:
+            country_list.append(country)
+    country_list.sort()
+    for c in country_list:
+        options += Markup("<option value=\"" + c + "\">" + c + "</option>")
+    return options
     
 def get_sector_data():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
     emissions_by_sector = {}
+    targetCountry = request.args['targetCountry']
+    startYear = float(request.args['startYear'])
+    endYear = float(request.args['endYear'])
     power = 0.0
     buildings = 0.0
     transport = 0.0
@@ -25,7 +46,7 @@ def get_sector_data():
     otherS = 0.0
     total = 0.0
     for country in countries:
-        if country["Country"] == "Afghanistan" and country["Year"] >= 1990:
+        if country["Country"] == targetCountry:
             power += country["Emissions"]["Sector"]["Power Industry"]
             buildings += country["Emissions"]["Sector"]["Buildings"]
             transport += country["Emissions"]["Sector"]["Transport"]
@@ -33,11 +54,25 @@ def get_sector_data():
             otherS += country["Emissions"]["Sector"]["Other sectors"]
         else:
             pass
-    power = power/(2012.0-1990.0) #end year minus start year to get averages AND limit each result to 2 decimal places (for readability)
-    buildings = buildings/(2012.0-1990.0)
-    transport = transport/(2012.0-1990.0)
-    otherI = otherI/(2012.0-1990.0)
-    otherS = otherS/(2012.0-1990.0)
+    if (endYear-startYear) > 0 and endYear > startYear:
+        power = power/(endYear-startYear) #End year minus start year to get averages
+        buildings = buildings/(endYear-startYear)
+        transport = transport/(endYear-startYear)
+        otherI = otherI/(endYear-startYear)
+        otherS = otherS/(endYear-startYear)
+    elif (endYear-startYear) == 0 or endYear == startYear:
+        power = power #If user inputs a range where the years are equal do not average
+        buildings = buildings
+        transport = transport
+        otherI = otherI
+        otherS = otherS
+    else:
+        power = power #Safety measure if the start year is greater then end year
+        buildings = buildings
+        transport = transport
+        otherI = otherI
+        otherS = otherS
+        
     
     total = power + buildings + transport + otherI + otherS # Express the data in terms of percentage distribution between the 5 sectors
     power = 100 * round((power/total), 2) 

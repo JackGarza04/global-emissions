@@ -5,9 +5,65 @@
 {% block title %}Data{% endblock %}
 
 {% block content %}
+	<script>
+		window.onload = function () {
+			var chart = new CanvasJS.Chart("sectorPieChart", {
+				exportEnabled: true,
+				animationEnabled: true,
+				title:{
+					text: "Emissions Per Sector"
+				},
+				legend:{
+					cursor: "pointer",
+					itemclick: explodePie
+				},
+				data: [{
+					type: "pie",
+					showInLegend: true,
+					startAngle: 30,
+					toolTipContent: "{name}: <strong>{y}%</strong>",
+					indexLabel: "{name} - {y}%",
+					dataPoints: [
+						{{ points }}
+					]
+				}]
+			});
+			chart.render();
+		}
+		
+		function explodePie (e) {
+			if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+				e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+			} else {
+				e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+			}
+			e.chart.render();
+		}
+	</script>
 	<div class="box">
-		<h1>
-			Emissions Per Sector Distribution (for Afghanistan 1990-2012)
+		<form action="/p1">
+			<label for="targetCountry" class="text">Select a country: </label>
+			<select name="targetCountry" required>
+				<option value="" disabled selected hidden>Please Choose...</option>
+				{{ options }}
+			</select>
+			<br><br>
+			
+			<label for="startYear" class="text">From</label>
+			<input type="number" name="startYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+
+			<label for="endYear" class="text">to</label>
+			<input type="number" name="endYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+			<br>
+			
+			<input type="submit">
+		</form>
+
+	</div>
+	
+	<div class="box">
+		<h1 class="underline-small">
+			Emissions Per Sector Distribution
 		</h1>
 	</div>
 	<div id="sectorPieChart" style="height: 300px; width: 100%;"></div>
