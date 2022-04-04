@@ -46,13 +46,13 @@ def get_sector_data():
     otherS = 0.0
     total = 0.0
     for country in countries:
-        if country["Country"] == targetCountry:
+        if country["Country"] == targetCountry and country["Year"] > startYear and country["Year"] < endYear:
             power += country["Emissions"]["Sector"]["Power Industry"]
             buildings += country["Emissions"]["Sector"]["Buildings"]
             transport += country["Emissions"]["Sector"]["Transport"]
             otherI += country["Emissions"]["Sector"]["Other Industry"]
             otherS += country["Emissions"]["Sector"]["Other sectors"]
-        else:
+        else: #ADD STATEMENT TO HANDLE START YEAR > END YEAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             pass
     if (endYear-startYear) > 0 and endYear > startYear:
         power = power/(endYear-startYear) #End year minus start year to get averages
