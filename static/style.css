@@ -23,11 +23,29 @@ a:link, a:visited,  a:hover, a:active
     text-decoration: none;
 }
 
-.box {
+#parent {
+    text-align:center;
+    height:100%;
+    width:100%;
+}
+.block {
 	padding-top: 50px;
-	padding-right: 100px;
 	padding-bottom: 50px;
-	padding-left: 100px;
+	padding-left: 50px;
+	padding-right: 50px;
+    height:100%;
+    width:100%;
+}
+.center {
+	padding-left: 0px;
+	padding-right: 0px;
+    margin:auto;
+}
+.left {
+    margin:auto auto auto 0;
+}
+.right {
+    margin:auto 0 auto auto;
 }
 
 .underline-small{

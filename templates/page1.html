@@ -29,6 +29,31 @@
 				}]
 			});
 			chart.render();
+			
+			var chart = new CanvasJS.Chart("splineChart", {
+				animationEnabled: true,  
+				title:{
+					text: "Total Emissions Per Year"
+				},
+				axisY: {
+					title: "Kilotons of CO2",
+					valueFormatString: "#0,,.",
+					suffix: "mn",
+					stripLines: [{
+						value: 3366500,
+						label: "Average"
+					}]
+				},
+				data: [{
+					yValueFormatString: "#,### Kilotons",
+					xValueFormatString: "YYYY",
+					type: "spline",
+					dataPoints: [
+						{{ splineData }}
+					]
+				}]
+			});
+			chart.render();
 		}
 		
 		function explodePie (e) {
@@ -39,31 +64,39 @@
 			}
 			e.chart.render();
 		}
+		
+		
 	</script>
-	<div class="box">
-		<form action="/p1">
-			<label for="targetCountry" class="text">Select a country: </label>
-			<select name="targetCountry" required>
-				<option value="" disabled selected hidden>Please Choose...</option>
-				{{ options }}
-			</select>
-			<br><br>
-			
-			<label for="startYear" class="text">From</label>
-			<input type="number" name="startYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+	<div id="parent">
+		<div id="child1" class="block center">
+			<form action="/p1">
+				<label for="targetCountry" class="text">Select a country: </label>
+				<select name="targetCountry" required>
+					<option value="" disabled selected hidden>Select a country...</option>
+					{{ options }}
+				</select>
+				<br><br>
+				
+				<label for="startYear" class="text">From</label>
+				<input type="number" name="startYear" id="startYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
 
-			<label for="endYear" class="text">to</label>
-			<input type="number" name="endYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
-			<br>
-			
-			<input type="submit">
-		</form>
-	
-		<h1 class="underline-small">
-			Emissions Per Sector Distribution
-		</h1>
+				<label for="endYear" class="text">to</label>
+				<input type="number" name="endYear" id="endYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+				<br>
+				
+				<input type="submit"></input>
+			</form>
+		</div>
+		<div id="child2" class="block left">
+			<h1 class="underline-small">
+				Emissions Per Sector Distribution
+			</h1>
+		</div>
 	</div>
 	<div id="sectorPieChart" style="height: 300px; width: 100%;"></div>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<br><br><br><br>
+	<div id="splineChart" style="height: 300px; width: 100%;"></div>
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<br><br><br><br>
 {% endblock %}
