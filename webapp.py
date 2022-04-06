@@ -13,7 +13,7 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     if "startYear" in request.args:
-        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), range = get_year_range())
+        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), yearRange = get_year_range())
     else:
         return render_template('page1.html', options = get_country_names())
 
@@ -106,7 +106,6 @@ def format_dict_as_graph(data):
         # { y: 20, name: "Medical Aid" }
         graph_points = graph_points + Markup('{ y: ' + str(data[key]) + ', name: "' + key + '" }, ')
     graph_points = graph_points[:-2] #Remove the last comma and space
-    print(graph_points)
     return graph_points
     
 def get_total_emissions_change():
@@ -175,7 +174,6 @@ def get_total_emissions_average(data):
     for year in data: #Helper function to display the average on the spline chart for the user's inputted data
         total_emissions = total_emissions + data[year]
     average_emissions = round((total_emissions / (len(data))), 2)
-    print(average_emissions)
     return average_emissions
         
 def format_dict_as_spline_graph(data):
@@ -184,7 +182,6 @@ def format_dict_as_spline_graph(data):
         # {x: new Date(2012, 0), y: 2009000}, 
         graph_points_spline = graph_points_spline + Markup('{x: new Date(' + str(key) + ', 0), y: ' + str((data[key])) + '}, ')
     graph_points_spline = graph_points_spline[:-2] #Remove the last comma and space
-    print(graph_points_spline)
     return graph_points_spline
     
 
