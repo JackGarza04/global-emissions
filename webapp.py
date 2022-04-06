@@ -13,14 +13,13 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     if "startYear" in request.args:
-        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()))
+        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), range = get_year_range())
     else:
         return render_template('page1.html', options = get_country_names())
 
 def get_country_names():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
-    
     country_list = []
     options = ""
     for i in countries:
@@ -36,61 +35,68 @@ def get_sector_data():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
     emissions_by_sector = {}
-    targetCountry = request.args['targetCountry']
-    startYear = float(request.args['startYear'])
-    endYear = float(request.args['endYear'])
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
     power = 0.0
     buildings = 0.0
     transport = 0.0
-    otherI = 0.0
-    otherS = 0.0
+    other_industry = 0.0
+    other_sectors = 0.0
     total = 0.0
     for country in countries:
-        if country["Country"] == targetCountry and country["Year"] >= startYear and country["Year"] <= endYear:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year:
             power += country["Emissions"]["Sector"]["Power Industry"]
             buildings += country["Emissions"]["Sector"]["Buildings"]
             transport += country["Emissions"]["Sector"]["Transport"]
-            otherI += country["Emissions"]["Sector"]["Other Industry"]
-            otherS += country["Emissions"]["Sector"]["Other sectors"]
-        elif country["Country"] == targetCountry and startYear > endYear: # Statement to handle if startYear > endYear (only count the start year's data)
-            if country["Year"] == startYear:
+            other_industry += country["Emissions"]["Sector"]["Other Industry"]
+            other_sectors += country["Emissions"]["Sector"]["Other sectors"]
+        elif country["Country"] == target_country and start_year > end_year: # Statement to handle if start_year > end_year (flip the two points and then calculate with the flipped values)
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and country["Year"] >= new_start_year and country["Year"] <= new_end_year:
                 power += country["Emissions"]["Sector"]["Power Industry"]
                 buildings += country["Emissions"]["Sector"]["Buildings"]
                 transport += country["Emissions"]["Sector"]["Transport"]
-                otherI += country["Emissions"]["Sector"]["Other Industry"]
-                otherS += country["Emissions"]["Sector"]["Other sectors"]
+                other_industry += country["Emissions"]["Sector"]["Other Industry"]
+                other_sectors += country["Emissions"]["Sector"]["Other sectors"]
             else:
                 pass
         else:
             pass
 
-    if (endYear-startYear) > 0 and endYear > startYear:
-        power = power/(endYear-startYear) #End year minus start year to get averages
-        buildings = buildings/(endYear-startYear)
-        transport = transport/(endYear-startYear)
-        otherI = otherI/(endYear-startYear)
-        otherS = otherS/(endYear-startYear)
-    elif (endYear-startYear) == 0 or endYear == startYear:
+    if (end_year-start_year) > 0 and end_year > start_year:
+        power = power/(end_year-start_year) #End year minus start year to get averages
+        buildings = buildings/(end_year-start_year)
+        transport = transport/(end_year-start_year)
+        other_industry = other_industry/(end_year-start_year)
+        other_sectors = other_sectors/(end_year-start_year)
+    elif end_year < start_year:
+        new_start_year = end_year #If the given start year is larger than the given end year, then flip the two values (since they are also flipped above)
+        new_end_year = start_year
+        power = power/(new_end_year-new_start_year) 
+        buildings = buildings/(new_end_year-new_start_year)
+        transport = transport/(new_end_year-new_start_year)
+        other_industry = other_industry/(new_end_year-new_start_year)
+        other_sectors = other_sectors/(new_end_year-new_start_year)
+    elif (end_year-start_year) == 0 or end_year == start_year:
         power = power #If user inputs a range where the years are equal do not average
         buildings = buildings
         transport = transport
-        otherI = otherI
-        otherS = otherS
+        other_industry = other_industry
+        other_sectors = other_sectors
     else:
-        power = power #Safety measure if the start year is greater then end year
-        buildings = buildings
-        transport = transport
-        otherI = otherI
-        otherS = otherS
-        
-    total = power + buildings + transport + otherI + otherS # Express the data in terms of percentage distribution between the 5 sectors
+        pass        
+
+    total = power + buildings + transport + other_industry + other_sectors # Express the data in terms of percentage distribution between the 5 sectors
     power = 100 * round((power/total), 2) 
     buildings = 100 * round((buildings/total), 2)
     transport = 100 * round((transport/total), 2)
-    otherI = 100 * round((otherI/total), 2)
-    otherS = 100 * round((otherS/total), 2)
+    other_industry = 100 * round((other_industry/total), 2)
+    other_sectors = 100 * round((other_sectors/total), 2)
     
-    emissions_by_sector.update({'Power Industry': power, 'Buildings': buildings, 'Transport': transport, 'Other Industry': otherI, 'Other sectors': otherS}) #appends all attributes to the dictionary
+    #Since the values are not present, the update function populates the empty dictionary with new key:value pairs
+    emissions_by_sector.update({'Power Industry': power, 'Buildings': buildings, 'Transport': transport, 'Other Industry': other_industry, 'Other sectors': other_sectors}) #appends all attributes to the dictionary
     return emissions_by_sector
 
     
@@ -99,63 +105,87 @@ def format_dict_as_graph(data):
     for key in data:
         # { y: 20, name: "Medical Aid" }
         graph_points = graph_points + Markup('{ y: ' + str(data[key]) + ', name: "' + key + '" }, ')
-    graph_points = graph_points[:-2]
+    graph_points = graph_points[:-2] #Remove the last comma and space
     print(graph_points)
     return graph_points
     
 def get_total_emissions_change():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
-    targetCountry = request.args['targetCountry']
-    startYear = float(request.args['startYear'])
-    endYear = float(request.args['endYear'])
-    totalCarbonPerYear = 0.0
-    targetYear = 0
-    totalCarbon = 0.0
-    emissionsPerYear = {}
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    total_carbon_per_year = 0.0
+    target_year = 0
+    emissions_per_year = {}
     for country in countries:
-        if country["Country"] == targetCountry and country["Year"] >= startYear and country["Year"] <= endYear and startYear != endYear:
-            totalCarbonPerYear = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
-            targetYear = country["Year"]
-            emissionsPerYear.update({targetYear: totalCarbonPerYear})
-            totalCarbon = totalCarbon + totalCarbonPerYear
-            totalCarbonPerYear = 0.0
-            targetYear = 0
-        elif country["Country"] == targetCountry and startYear > endYear:# if the user inputs a start year thats greater than the end year, then flip the start and end years to make the function valid
-            newEndYear = startYear 
-            newStartYear = endYear
-            if country["Country"] == targetCountry and country["Year"] >= newStartYear and country["Year"] <= newEndYear and startYear != endYear:
-                totalCarbonPerYear = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
-                targetYear = country["Year"]
-                emissionsPerYear.update({targetYear: totalCarbonPerYear})
-                totalCarbon = totalCarbon + totalCarbonPerYear
-                totalCarbonPerYear = 0.0
-                targetYear = 0
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and start_year != end_year:
+            total_carbon_per_year = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
+            target_year = country["Year"]
+            emissions_per_year.update({target_year: total_carbon_per_year}) #Write in new key:value pairs for each iteration (year) within the json file that satisfies the range
+            total_carbon_per_year = 0.0
+            target_year = 0
+        elif country["Country"] == target_country and start_year > end_year:# if the user inputs a start year thats greater than the end year, then flip the start and end years to make the function valid
+            new_end_year = start_year 
+            new_start_year = end_year
+            if country["Country"] == target_country and country["Year"] >= new_start_year and country["Year"] <= new_end_year and start_year != end_year:
+                total_carbon_per_year = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
+                target_year = country["Year"]
+                emissions_per_year.update({target_year: total_carbon_per_year})
+                total_carbon_per_year = 0.0
+                target_year = 0
             else:
                 pass
-        elif country["Country"] == targetCountry and startYear == endYear: #If the user inputs a year range of 0, then add 5 to the end year to make the graph readable
-            endYear = endYear + 5
-            if country["Country"] == targetCountry and country["Year"] >= startYear and country["Year"] <= endYear:
-                totalCarbonPerYear = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
-                targetYear = country["Year"]
-                emissionsPerYear.update({targetYear: totalCarbonPerYear})
-                totalCarbon = totalCarbon + totalCarbonPerYear
-                totalCarbonPerYear = 0.0
-                targetYear = 0
+        elif country["Country"] == target_country and start_year == end_year: #If the user inputs a year range of 0, then add 5 to the end year to make the graph readable
+            end_year = end_year + 5
+            if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year:
+                total_carbon_per_year = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
+                target_year = country["Year"]
+                emissions_per_year.update({target_year: total_carbon_per_year})
+                total_carbon_per_year = 0.0
+                target_year = 0
             else:
                 pass
         else:
             pass
-    return emissionsPerYear
+    return emissions_per_year
     
+def get_year_range():
+    start_year = str(request.args['startYear'])
+    end_year = str(request.args['endYear'])
+    response = ""
+    if start_year > end_year:
+        new_start_year = end_year
+        new_end_year = start_year
+        response = "(" + new_start_year + " - " + new_end_year + ")"
+    elif start_year == end_year:
+        response = "(" + start_year + ")"
+    else:
+        response = "(" + start_year + " - " + end_year + ")"
+    return response
+        
+    
+def get_target_country():
+    target_country = request.args['targetCountry']
+    return target_country
+    
+def get_total_emissions_average(data):
+    average_emissions = 0 
+    total_emissions = 0
+    for year in data: #Helper function to display the average on the spline chart for the user's inputted data
+        total_emissions = total_emissions + data[year]
+    average_emissions = round((total_emissions / (len(data))), 2)
+    print(average_emissions)
+    return average_emissions
+        
 def format_dict_as_spline_graph(data):
-    graphPoints = ""
+    graph_points_spline = ""
     for key in data:
         # {x: new Date(2012, 0), y: 2009000}, 
-        graphPoints = graphPoints + Markup('{x: new Date(' + str(key) + ', 0), y: ' + str((data[key])) + '}, ')
-    graphPoints = graphPoints[:-2]
-    print(graphPoints)
-    return graphPoints
+        graph_points_spline = graph_points_spline + Markup('{x: new Date(' + str(key) + ', 0), y: ' + str((data[key])) + '}, ')
+    graph_points_spline = graph_points_spline[:-2] #Remove the last comma and space
+    print(graph_points_spline)
+    return graph_points_spline
     
 
 if __name__ == '__main__':

@@ -37,12 +37,15 @@
 				},
 				axisY: {
 					title: "Kilotons of CO2",
-					valueFormatString: "#0,,.",
-					suffix: "mn",
+					valueFormatString: "#,###",
+					suffix: "kt",
 					stripLines: [{
-						value: 3366500,
+						value: {{ average }},
 						label: "Average"
 					}]
+				},
+				axisX: {
+				   title: "Year"
 				},
 				data: [{
 					yValueFormatString: "#,### Kilotons",
@@ -89,7 +92,7 @@
 		</div>
 		<div id="child2" class="block left">
 			<h1 class="underline-small">
-				Emissions Per Sector Distribution
+				Emissions Data for {{ country }} {{ range }}:
 			</h1>
 		</div>
 	</div>
