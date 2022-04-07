@@ -17,6 +17,19 @@ h1 {
 	margin-left: 50px;
 }
 
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #DDD;
+}
+
+tr:hover {background-color: #D6EEEE;}
+
 a:link, a:visited,  a:hover, a:active
 {
     color: #ff8c00;
@@ -29,10 +42,10 @@ a:link, a:visited,  a:hover, a:active
     width:100%;
 }
 .block {
-	padding-top: 50px;
-	padding-bottom: 50px;
-	padding-left: 50px;
-	padding-right: 50px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
     height:100%;
     width:100%;
 }

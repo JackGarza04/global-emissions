@@ -11,7 +11,7 @@
 				exportEnabled: true,
 				animationEnabled: true,
 				title:{
-					text: "Emissions Per Sector"
+					text: "Emissions Distribution"
 				},
 				legend:{
 					cursor: "pointer",
@@ -95,11 +95,70 @@
 				Emissions Data for {{ country }} {{ yearRange }}:
 			</h1>
 		</div>
+		<div id="child3" class="block left">
+			<table>
+				<tr>
+					<th>Sector</th>
+					<th>CO<sub>2</sub></th>
+					<th>N<sub>2</sub>O</th>
+					<th>CH<sub>4</sub></th>
+					<th>Total</th>
+				</tr>
+				<tr>
+					<td>Industry</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Buildings</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Transport</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Other Industry</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Other Sectors</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>All Sectors</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>		
+		</div>
 	</div>
-	<div id="sectorPieChart" style="height: 300px; width: 100%;"></div>
+	<div id="sectorPieChart" class="block center" style="height: 300px; width: 100%;"></div>
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<br><br><br><br>
-	<div id="splineChart" style="height: 300px; width: 100%;"></div>
+	<div id="splineChart" class="block center" style="height: 300px; width: 100%;"></div>
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<br><br><br><br>
 {% endblock %}

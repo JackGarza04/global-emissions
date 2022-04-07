@@ -135,8 +135,9 @@ def get_total_emissions_change():
                 target_year = 0
             else:
                 pass
-        elif country["Country"] == target_country and start_year == end_year: #If the user inputs a year range of 0, then add 5 to the end year to make the graph readable
-            end_year = end_year + 5
+        elif country["Country"] == target_country and start_year == end_year: #If the user inputs a year range of 0, then add 4 to the end year & start year to make the graph readable
+            end_year = end_year + 4
+            start_year = start_year - 4
             if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year:
                 total_carbon_per_year = (country["Emissions"]["Type"]["CO2"] + country["Emissions"]["Type"]["N2O"] + country["Emissions"]["Type"]["CH4"])
                 target_year = country["Year"]
