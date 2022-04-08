@@ -3,6 +3,7 @@ from flask import render_template, flash, Markup
 
 import os
 import json
+import statistics
 
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     if "startYear" in request.args:
-        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), yearRange = get_year_range())
+        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), yearRange = get_year_range(), averageCarbon = get_average_carbon(), averageNitrous = get_average_nitrous(), averageMethane = get_average_methane(), minCarbon = get_min_carbon(), maxCarbon = get_max_carbon(), minNitrous = get_min_nitrous(), maxNitrous = get_max_nitrous(), minMethane = get_min_methane(), maxMethane = get_max_methane(), carbonDeviation = get_standard_deviation_carbon(), nitrousDeviation = get_standard_deviation_nitrous(), methaneDeviation = get_standard_deviation_methane())
     else:
         return render_template('page1.html', options = get_country_names())
 
@@ -150,6 +151,316 @@ def get_total_emissions_change():
             pass
     return emissions_per_year
     
+def get_average_carbon():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    total_CO2 = 0.0
+    avg_CO2 = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            total_CO2 = total_CO2 + country["Emissions"]["Type"]["CO2"]
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                total_CO2 = total_CO2 + country["Emissions"]["Type"]["CO2"]
+            else:
+                pass
+        else:
+            pass
+    if start_year != end_year:
+        avg_CO2 = round((total_CO2 / abs(start_year - end_year)), 2)
+    else:
+        avg_CO2 = round((total_CO2), 2)
+    return avg_CO2
+    
+def get_average_nitrous():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    total_N2O = 0.0
+    avg_N2O = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            total_N2O = total_N2O + country["Emissions"]["Type"]["N2O"]
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                total_N2O = total_N2O + country["Emissions"]["Type"]["N2O"]
+            else:
+                pass
+        else:
+            pass
+    if start_year != end_year:
+        avg_N2O = round((total_N2O / abs(start_year - end_year)), 2)
+    else:
+        avg_N2O = round((total_N2O), 2)
+    return avg_N2O
+
+def get_average_methane():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    total_CH4 = 0.0
+    avg_CH4 = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            total_CH4 = total_CH4 + country["Emissions"]["Type"]["CH4"]
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                total_CH4 = total_CH4 + country["Emissions"]["Type"]["CH4"]
+            else:
+                pass
+        else:
+            pass
+    if start_year != end_year:
+        avg_CH4 = round((total_CH4 / abs(start_year - end_year)), 2)
+    else:
+        avg_CH4 = round((total_CH4), 2)
+    return avg_CH4
+    
+def get_min_carbon():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    lowest_CO2 = 10000000.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["CO2"] < lowest_CO2:
+                lowest_CO2 = country["Emissions"]["Type"]["CO2"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["CO2"] < lowest_CO2:
+                    lowest_CO2 = country["Emissions"]["Type"]["CO2"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return lowest_CO2
+
+def get_min_nitrous():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    lowest_N2O = 10000000.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["N2O"] < lowest_N2O:
+                lowest_N2O = country["Emissions"]["Type"]["N2O"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["N2O"] < lowest_N2O:
+                    lowest_N2O = country["Emissions"]["Type"]["N2O"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return lowest_N2O
+    
+def get_min_methane():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    lowest_CH4 = 10000000.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["CH4"] < lowest_CH4:
+                lowest_CH4 = country["Emissions"]["Type"]["CH4"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["CH4"] < lowest_CH4:
+                    lowest_CH4 = country["Emissions"]["Type"]["CH4"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return lowest_CH4
+
+def get_max_carbon():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    highest_CO2 = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["CO2"] > highest_CO2:
+                highest_CO2 = country["Emissions"]["Type"]["CO2"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["CO2"] > highest_CO2:
+                    highest_CO2 = country["Emissions"]["Type"]["CO2"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return highest_CO2
+
+def get_max_nitrous():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    highest_N2O = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["N2O"] > highest_N2O:
+                highest_N2O = country["Emissions"]["Type"]["N2O"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["N2O"] > highest_N2O:
+                    highest_N2O = country["Emissions"]["Type"]["N2O"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return highest_N2O
+    
+def get_max_methane():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    highest_CH4 = 0.0
+    for country in countries:
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            if country["Emissions"]["Type"]["CH4"] > highest_CH4:
+                highest_CH4 = country["Emissions"]["Type"]["CH4"]
+            else:
+                pass
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                if country["Emissions"]["Type"]["CH4"] > highest_CH4:
+                    highest_CH4 = country["Emissions"]["Type"]["CH4"]
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    return highest_CH4
+    
+def get_standard_deviation_carbon():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    data = []
+    carbon_deviation = 0.0
+    for country in countries: 
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            data.append(country["Emissions"]["Type"]["CO2"])
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                data.append(country["Emissions"]["Type"]["CO2"])
+            else:
+                pass
+        else:
+            pass
+    carbon_deviation = round((statistics.stdev(data)), 2)
+    return carbon_deviation
+
+def get_standard_deviation_nitrous():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    data = []
+    nitrous_deviation = 0.0
+    for country in countries: 
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            data.append(country["Emissions"]["Type"]["N2O"])
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                data.append(country["Emissions"]["Type"]["N2O"])
+            else:
+                pass
+        else:
+            pass
+    nitrous_deviation = round((statistics.stdev(data)), 2)
+    return nitrous_deviation
+
+def get_standard_deviation_methane():
+    with open('emissions.json') as emissions_data:
+        countries = json.load(emissions_data)
+    target_country = request.args['targetCountry']
+    start_year = float(request.args['startYear'])
+    end_year = float(request.args['endYear'])
+    data = []
+    methane_deviation = 0.0
+    for country in countries: 
+        if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            data.append(country["Emissions"]["Type"]["CH4"])
+        elif country["Country"] == target_country and start_year > end_year:
+            new_start_year = end_year
+            new_end_year = start_year
+            if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                data.append(country["Emissions"]["Type"]["CH4"])
+            else:
+                pass
+        else:
+            pass
+    methane_deviation = round((statistics.stdev(data)), 2)
+    return methane_deviation
+
+    
 def get_year_range():
     start_year = str(request.args['startYear'])
     end_year = str(request.args['endYear'])
@@ -163,7 +474,6 @@ def get_year_range():
     else:
         response = "(" + start_year + " - " + end_year + ")"
     return response
-        
     
 def get_target_country():
     target_country = request.args['targetCountry']
