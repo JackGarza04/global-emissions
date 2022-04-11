@@ -17,6 +17,57 @@ h1 {
 	margin-left: 50px;
 }
 
+input[type=number] {
+	width: 110px;
+	border: none;
+	border-bottom: 2px solid black;
+}
+
+input[type=number]:focus {
+	background-color: lightblue;
+	outline: none;
+}
+
+select {
+	width: 270px;
+	border: none;
+	border-bottom: 2px solid black;
+	border-radius: 4px;
+	background-color: #f1f1f1;
+}
+
+input[type=submit] {
+	outline: 0;
+	grid-gap: 8px;
+	align-items: center;
+	background: 0 0;
+	border: 1px solid #000;
+	border-radius: 4px;
+	cursor: pointer;
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 16px;
+	gap: 8px;
+	justify-content: center;
+	line-height: 1.5;
+	overflow: hidden;
+	padding: 8px 13px;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	transition: all .14s ease-out;
+	white-space: nowrap;
+}
+	
+input[type=submit]:focus-visible{
+	outline-offset: 1px;
+}
+
+input[type=submit]:hover{
+	box-shadow: 4px 4px 0 #000;
+	transform: translate(-4px,-4px);
+}
+
+
 table {
 	border-collapse: collapse;
 	width: 100%;
