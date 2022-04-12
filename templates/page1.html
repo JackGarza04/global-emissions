@@ -80,11 +80,10 @@
 				</select>
 				<br><br>
 				
-				<label for="startYear" class="text">From</label>
-				<input type="number" name="startYear" id="startYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+				<label for="startYear" class="text">Enter a year range:</label>
+				<input type="number" name="startYear" id="startYear" placeholder="from..." min="1970" max="2012" step="1" value="{{ startYearInput }}" required></input>
 
-				<label for="endYear" class="text">to</label>
-				<input type="number" name="endYear" id="endYear" placeholder="Enter a year" min="1970" max="2012" step="1" required></input>
+				<input type="number" name="endYear" id="endYear" placeholder="to..." min="1970" max="2012" step="1" value="{{ endYearInput }}" required></input>
 				<br><br>
 				
 				<input type="submit"></input>
@@ -95,56 +94,52 @@
 				Emissions Data for {{ country }} {{ yearRange }}:
 			</h1>
 		</div>
-		<div id="child3" class="block left">
-			<table>
-				<tr>
-					<th></th>
-					<th>Minimum</th>
-					<th>Maximum</th>
-					<th>Average</th>
-					<th>Deviation</th>
-					<th>Total</th>
-				</tr>
-				<tr>
-					<td>CO<sub>2</sub></td>
-					<td>{{ minCarbon }} kt</td>
-					<td>{{ maxCarbon }} kt</td>
-					<td>{{ averageCarbon }} kt</td>
-					<td>{{ carbonDeviation }} kt</td>
-					<td>{{ totalCarbon }} kt</td>
-				</tr>
-				<tr>
-					<td>N<sub>2</sub>O</td>
-					<td>{{ minNitrous }} kt</td>
-					<td>{{ maxNitrous }} kt</td>
-					<td>{{ averageNitrous }} kt</td>
-					<td>{{ nitrousDeviation }} kt</td>
-					<td>{{ totalNitrous }} kt</td>
-				</tr>
-				<tr>
-					<td>CH<sub>4</sub></td>
-					<td>{{ minMethane }} kt</td>
-					<td>{{ maxMethane }} kt</td>
-					<td>{{ averageMethane }} kt</td>
-					<td>{{ methaneDeviation }} kt</td>
-					<td>{{ totalMethane }} kt</td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>% of World</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>{{ percentOfWorld }}%</td>
-				</tr>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+						<th scope="col">Minimum</th>
+						<th scope="col">Maximum</th>
+						<th scope="col">Average</th>
+						<th scope="col">Deviation</th>
+						<th scope="col">Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">CO<sub>2</sub></td>
+						<td>{{ minCarbon }} kt</td>
+						<td>{{ maxCarbon }} kt</td>
+						<td>{{ averageCarbon }} kt</td>
+						<td>{{ carbonDeviation }} kt</td>
+						<td>{{ totalCarbon }} kt</td>
+					</tr>
+					<tr>
+						<th scope="row">N<sub>2</sub>O</td>
+						<td>{{ minNitrous }} kt</td>
+						<td>{{ maxNitrous }} kt</td>
+						<td>{{ averageNitrous }} kt</td>
+						<td>{{ nitrousDeviation }} kt</td>
+						<td>{{ totalNitrous }} kt</td>
+					</tr>
+					<tr>
+						<th scope="row">CH<sub>4</sub></td>
+						<td>{{ minMethane }} kt</td>
+						<td>{{ maxMethane }} kt</td>
+						<td>{{ averageMethane }} kt</td>
+						<td>{{ methaneDeviation }} kt</td>
+						<td>{{ totalMethane }} kt</td>
+					</tr>
+					<tr>
+						<td colspan="6"></td>
+					</tr>
+					<tr>
+						<th scope="row">% of World</td>
+						<td colspan="4"></td>
+						<td>{{ percentOfWorld }}%</td>
+					</tr>
+				</tbody>
 			</table>		
 		</div>
 	</div>

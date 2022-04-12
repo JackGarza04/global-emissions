@@ -14,13 +14,14 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     if "startYear" in request.args:
-        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), yearRange = get_year_range(), averageCarbon = get_average_carbon(), averageNitrous = get_average_nitrous(), averageMethane = get_average_methane(), minCarbon = get_min_carbon(), maxCarbon = get_max_carbon(), minNitrous = get_min_nitrous(), maxNitrous = get_max_nitrous(), minMethane = get_min_methane(), maxMethane = get_max_methane(), carbonDeviation = get_standard_deviation_carbon(), nitrousDeviation = get_standard_deviation_nitrous(), methaneDeviation = get_standard_deviation_methane(), totalCarbon = get_total_for_CO2(), totalNitrous = get_total_for_N2O(), totalMethane = get_total_for_CH4(), percentOfWorld = get_percent_of_world())
+        return render_template('page1.html', points = format_dict_as_graph(get_sector_data()), options = get_country_names(), splineData = format_dict_as_spline_graph(get_total_emissions_change()), average = get_total_emissions_average(get_total_emissions_change()), country = get_target_country(), yearRange = get_year_range(), averageCarbon = get_average_carbon(), averageNitrous = get_average_nitrous(), averageMethane = get_average_methane(), minCarbon = get_min_carbon(), maxCarbon = get_max_carbon(), minNitrous = get_min_nitrous(), maxNitrous = get_max_nitrous(), minMethane = get_min_methane(), maxMethane = get_max_methane(), carbonDeviation = get_standard_deviation_carbon(), nitrousDeviation = get_standard_deviation_nitrous(), methaneDeviation = get_standard_deviation_methane(), totalCarbon = get_total_for_CO2(), totalNitrous = get_total_for_N2O(), totalMethane = get_total_for_CH4(), percentOfWorld = get_percent_of_world(), startYearInput = save_start_year(), endYearInput = save_end_year())
     else:
         return render_template('page1.html', options = get_country_names())
 
 def get_country_names():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
+    targetCountry = request.args['targetCountry']
     country_list = []
     options = ""
     for i in countries:
@@ -29,8 +30,45 @@ def get_country_names():
             country_list.append(country)
     country_list.sort()
     for c in country_list:
-        options += Markup("<option value=\"" + c + "\">" + c + "</option>")
+        if c == targetCountry: #When the user inputs, save the input and make the option selected for ease of use
+            options += Markup("<option value=\"" + c + "\" selected>" + c + "</option>")
+        else:
+            options += Markup("<option value=\"" + c + "\">" + c + "</option>")
     return options
+    
+def save_start_year():
+    start_year = int(request.args['startYear'])
+    end_year = int(request.args['endYear'])
+    start_value = ""
+    if start_year >= 1970 and start_year < end_year:
+        start_value = start_year
+    elif start_year > end_year:
+        new_start_year = end_year
+        start_value = new_start_year
+    else:
+        start_vaule = start_year
+        
+    if start_value != 0:
+        return start_value
+    else:
+        pass
+
+def save_end_year():
+    start_year = int(request.args['startYear'])
+    end_year = int(request.args['endYear'])
+    end_value = 0
+    if end_year <= 2012 and start_year < end_year:
+        end_value = end_year
+    elif start_year > end_year:
+        new_end_year = start_year
+        end_value = new_end_year
+    else:
+        end_value = end_year
+    
+    if end_value != 0:
+        return end_value
+    else:
+        pass
     
 def get_sector_data():
     with open('emissions.json') as emissions_data:
