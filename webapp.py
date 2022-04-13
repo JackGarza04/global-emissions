@@ -225,6 +225,36 @@ def get_percent_of_world():
     percent_of_world = round(((total_for_target / total_for_world) * 100), 2)
     return percent_of_world
     
+# def get_average(gas):
+    # with open('emissions.json') as emissions_data:
+        # countries = json.load(emissions_data)
+    # target_country = request.args['targetCountry']
+    # start_year = float(request.args['startYear'])
+    # end_year = float(request.args['endYear'])
+    # target_pollutant = gas
+    # total_pollutant = 0.0
+    # avg_pollutant = 0.0
+    # for country in countries:
+        # if country["Country"] == target_country and country["Year"] >= start_year and country["Year"] <= end_year and not start_year > end_year:
+            # total_pollutant = total_pollutant + country["Emissions"]["Type"][target_pollutant]
+        # elif country["Country"] == target_country and start_year > end_year:
+            # new_start_year = end_year
+            # new_end_year = start_year
+            # if country["Country"] == target_country and new_start_year <= country["Year"] and new_end_year >= country["Year"]:
+                # total_pollutant = total_pollutant + country["Emissions"]["Type"][target_pollutant]
+            # else:
+                # pass
+        # else:
+            # pass
+    # if start_year != end_year:
+        # avg_pollutant = round((total_pollutant / abs(start_year - end_year)), 2)
+    # else:
+        # avg_pollutant = round((total_pollutant), 2)
+    # avg_pollutant = "{:,}".format(avg_pollutant)
+    # return avg_pollutant
+
+
+
 def get_average_carbon():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
