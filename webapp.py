@@ -21,7 +21,6 @@ def render_page1():
 def get_country_names():
     with open('emissions.json') as emissions_data:
         countries = json.load(emissions_data)
-    targetCountry = request.args['targetCountry']
     country_list = []
     options = ""
     for i in countries:
@@ -30,8 +29,12 @@ def get_country_names():
             country_list.append(country)
     country_list.sort()
     for c in country_list:
-        if c == targetCountry: #When the user inputs, save the input and make the option selected for ease of use
-            options += Markup("<option value=\"" + c + "\" selected>" + c + "</option>")
+        if "targetCountry" in request.args:
+            targetCountry = request.args['targetCountry']
+            if c == targetCountry: #When the user inputs, save the input and make the option selected for ease of use
+                options += Markup("<option value=\"" + c + "\" selected>" + c + "</option>")
+            else:
+                options += Markup("<option value=\"" + c + "\">" + c + "</option>")
         else:
             options += Markup("<option value=\"" + c + "\">" + c + "</option>")
     return options
