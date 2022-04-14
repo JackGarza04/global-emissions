@@ -1,3 +1,3 @@
 # global-emissions
 
-https://jackgarza04.github.io/global-emissions/
+https://global-emissions-data.herokuapp.com/
